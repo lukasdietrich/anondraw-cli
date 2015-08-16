@@ -12,6 +12,12 @@ function main (protocol, args) {
     protocol.connect(args.room, args, function (err, client) {
         cli.setPrompt(chalk.red(client.getName()) + chalk.gray(" > "))
 
+        client.on("leave", function (user) {
+            cli.print(util.format("%s has %s",
+                chalk.magenta(user.name),
+                chalk.red("left")));
+        });
+
         client.on("reputation", function (change) {
             var delta = change.to - change.from;
 
