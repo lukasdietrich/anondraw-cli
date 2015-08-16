@@ -9,7 +9,7 @@ var moment   = require("moment");
 function main (protocol, args) {
     var cli = new Cli(process.stdin, process.stdout);
 
-    protocol.connect("member_main", args, function (err, client) {
+    protocol.connect(args.room, args, function (err, client) {
         cli.setPrompt(chalk.red(client.getName()) + chalk.gray(" > "))
 
         client.on("reputation", function (change) {
@@ -50,6 +50,11 @@ main(new Protocol({
     .option("pass", {
         alias: "p",
         describe: "Anondraw account passphrase"
+    })
+    .option("room", {
+        alias: "r",
+        describe: "Chatroom to talk in",
+        default: "member_main"
     })
     .implies("mail", "pass")
     .argv);
