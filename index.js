@@ -1,6 +1,7 @@
 var Protocol = require("./lib/protocol");
 var Cli      = require("./lib/cli");
 
+var _        = require("lodash");
 var yargs    = require("yargs");
 var util     = require("util");
 var chalk    = require("chalk");
@@ -11,6 +12,18 @@ function main (protocol, args) {
 
     protocol.connect(args.room, args, function (err, client) {
         cli.setPrompt(chalk.red(client.getName()) + chalk.gray(" > "))
+
+        var commands = {
+            list: function () {
+                var users = client.getUsers();
+
+                cli.print(util.format("Users (%s):\n%s",
+                    chalk.yellow(users.length),
+                    _.map(users, function (o) {
+                        return chalk.blue(o.name);
+                    }).join(", ")));
+            }
+        };
 
         client.on("leave", function (user) {
             cli.print(util.format("%s has %s",
@@ -35,7 +48,17 @@ function main (protocol, args) {
         });
 
         cli.on("line", function (line) {
-            client.send("chatmessage", line);
+            if (line.indexOf("/") === 0) {
+                var command = line.substring(1);
+
+                if (commands[command]) {
+                    commands[command](line.substring(command.length + 2));
+                } else {
+                    cli.print(chalk.bgRed(util.format("unknown command '%s'", command)));
+                }
+            } else {
+                client.send("chatmessage", line);
+            }
         });
     });
 }
