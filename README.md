@@ -7,7 +7,7 @@ To use anondraw-cli you need [Node.js](https://nodejs.org/).
 
 ```bash
 # step 1
-git clone git@github.com:lukasdietrich/anondraw-cli.git
+git clone https://github.com/lukasdietrich/anondraw-cli.git
 
 # step 2
 cd anondraw-cli
